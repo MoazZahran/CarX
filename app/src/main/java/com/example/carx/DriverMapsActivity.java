@@ -73,7 +73,8 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
+                mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+                mMap.setMyLocationEnabled(true);
             } else {
                 checkLocationPermission();
             }
@@ -83,6 +84,9 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
     LocationCallback mLocationCallback = new LocationCallback(){
         @Override
         public void onLocationResult(LocationResult locationResult) {
+
+//            Toast.makeText(DriverMapsActivity.this, "Shalom ya Habibi", Toast.LENGTH_SHORT).show();
+
             for (Location location : locationResult.getLocations() ){
                 if (getApplicationContext() != null){
 
@@ -90,9 +94,11 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
 //                        rideDistance += mLastLocation.distanceTo(location)/1000;
 //                    }
 
+//                    Toast.makeText(DriverMapsActivity.this, "يارب تشتغل!", Toast.LENGTH_SHORT).show();
+
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
 
 
                 }
@@ -101,7 +107,7 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
     };
 
     private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
                 new AlertDialog.Builder(this)
                         .setTitle("Give Permission")
@@ -112,7 +118,6 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
                                 ActivityCompat.requestPermissions(DriverMapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
                             }
                         })
-                        .create()
                         .show();
             } else {
                 ActivityCompat.requestPermissions(DriverMapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
