@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "29224949971",
+    "firebase_url": "https://carx-e33e4.firebaseio.com",
+    "project_id": "carx-e33e4",
+    "storage_bucket": "carx-e33e4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29224949971:android:83429229ff19bf9b5d5c26",
+        "android_client_info": {
+          "package_name": "com.example.carx"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "29224949971-gna1usiqrcunoltl9gbhrakq18iefrv2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzhgYne3ZTPuvWLVhUd7txE9ipvIEoeWY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "29224949971-gna1usiqrcunoltl9gbhrakq18iefrv2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
