@@ -18,6 +18,8 @@ import android.os.Looper;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -32,6 +34,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -84,23 +90,32 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
     LocationCallback mLocationCallback = new LocationCallback(){
         @Override
         public void onLocationResult(LocationResult locationResult) {
-
 //            Toast.makeText(DriverMapsActivity.this, "Shalom ya Habibi", Toast.LENGTH_SHORT).show();
-
             for (Location location : locationResult.getLocations() ){
                 if (getApplicationContext() != null){
-
 //                    if (!customerId.equals("") && mLastLocation != null && location != null) {
 //                        rideDistance += mLastLocation.distanceTo(location)/1000;
 //                    }
 
-//                    Toast.makeText(DriverMapsActivity.this, "يارب تشتغل!", Toast.LENGTH_SHORT).show();
-
+//                    Toast.makeText(DriverMapsActivity.this, "يارب تشتغل!", Toast.LENGTH_SHORT).show()
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                     mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
 
+                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("driversAvailable");
 
+                    GeoFire geoFire = new GeoFire(ref);
+                    geoFire.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
+                        @Override
+                        public void onComplete(String key, DatabaseError error) {
+                            if (error != null) {
+                                Toast.makeText(DriverMapsActivity.this, "There was an error saving the location to GeoFire: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                            } else {
+//                                Toast.makeText(DriverMapsActivity.this, "Location saved on server successfully!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
             }
         }
@@ -141,5 +156,16 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
                 break;
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        String userId = FirebaseAuth.getInstance().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("driverAvailable");
+
+        GeoFire geoFire = new GeoFire(ref);
+        geoFire.removeLocation(userId);
     }
 }
