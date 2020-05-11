@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DriverMapsActivity">
+    tools:context=".CustomerMapsActivity">
 
     <Button
         android:layout_width="wrap_content"
@@ -17,6 +17,12 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-<!--        tools:layout="@layout/activity_driver_maps" />-->
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/call_your_car"
+        android:id="@+id/Call_car_btn"
+        android:layout_gravity="bottom"/>
 
 </FrameLayout>

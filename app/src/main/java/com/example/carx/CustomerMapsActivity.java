@@ -42,32 +42,56 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class CustomerMapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     Location mLastLocation;
     LocationRequest mLocationRequest;
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
-    private Button mLogOut;
+    private Button mLogOut, mCallCar;
+
+    private LatLng pickUpLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_driver_maps);
+        setContentView(R.layout.activity_costumer_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         mLogOut = findViewById(R.id.Logout_btn);
+        mCallCar = findViewById(R.id.Call_car_btn);
+
         mLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(DriverMapsActivity.this, MainActivity.class);
+                Intent intent = new Intent(CustomerMapsActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
+            }
+        });
+
+        mCallCar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("CustomerRequest");
+                GeoFire geoFire = new GeoFire(ref);
+
+                if (mLastLocation == null){
+                    Toast.makeText(CustomerMapsActivity.this, "Please Wait..", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                pickUpLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                mMap.addMarker(new MarkerOptions().position(pickUpLocation).title("Pick Up Here"));
+
+                mCallCar.setText("Getting Your Driver..");
             }
         });
     }
@@ -115,21 +139,6 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                     mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
-
-                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("driversAvailable");
-
-                    GeoFire geoFire = new GeoFire(ref);
-                    geoFire.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
-                        @Override
-                        public void onComplete(String key, DatabaseError error) {
-                            if (error != null) {
-                                Toast.makeText(DriverMapsActivity.this, "There was an error saving the location to GeoFire: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                            } else {
-//                                Toast.makeText(DriverMapsActivity.this, "Location saved on server successfully!", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
                 }
             }
         }
@@ -144,12 +153,12 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ActivityCompat.requestPermissions(DriverMapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                                ActivityCompat.requestPermissions(CustomerMapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
                             }
                         })
                         .show();
             } else {
-                ActivityCompat.requestPermissions(DriverMapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                ActivityCompat.requestPermissions(CustomerMapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
         }
     }
@@ -175,11 +184,6 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     protected void onStop() {
         super.onStop();
-
-        String userId = FirebaseAuth.getInstance().getUid();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("driverAvailable");
-
-        GeoFire geoFire = new GeoFire(ref);
-        geoFire.removeLocation(userId);
     }
 }
+

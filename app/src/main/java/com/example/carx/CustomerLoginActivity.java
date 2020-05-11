@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class CostumerLoginActivity extends AppCompatActivity {
+public class CustomerLoginActivity extends AppCompatActivity {
 
     private Button btnLogin , btnSignUp;
     private EditText editTextEmail, editTextPassword;
@@ -38,10 +38,9 @@ public class CostumerLoginActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser User = FirebaseAuth.getInstance().getCurrentUser();
                 if (User != null){
-                    Intent intent = new Intent(CostumerLoginActivity.this, DriverMapsActivity.class);
+                    Intent intent = new Intent(CustomerLoginActivity.this, CustomerMapsActivity.class);
                     startActivity(intent);
                     finish();
-                    return;
                 }
             }
         };
@@ -57,11 +56,11 @@ public class CostumerLoginActivity extends AppCompatActivity {
                 final String userEmail = editTextEmail.getText().toString();
                 final String userPassword = editTextPassword.getText().toString();
 
-                mAuth.createUserWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(CostumerLoginActivity.this, new OnCompleteListener<AuthResult>() {
+                mAuth.createUserWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(CustomerLoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (!task.isSuccessful()){
-                            Toast.makeText(CostumerLoginActivity.this, "Sign Up Error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(CustomerLoginActivity.this, "Sign Up Error", Toast.LENGTH_LONG).show();
                         } else {
                             String driverId = mAuth.getCurrentUser().getUid();
                             DatabaseReference current_Driver_db = FirebaseDatabase.getInstance().getReference().child("Users").child("Costumers").child(driverId);
@@ -78,11 +77,11 @@ public class CostumerLoginActivity extends AppCompatActivity {
                 final String userEmail = editTextEmail.getText().toString();
                 final String userPassword = editTextPassword.getText().toString();
 
-                mAuth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(CostumerLoginActivity.this, new OnCompleteListener<AuthResult>() {
+                mAuth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(CustomerLoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (!task.isSuccessful()) {
-                            Toast.makeText(CostumerLoginActivity.this, "Sign In Error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(CustomerLoginActivity.this, "Sign In Error", Toast.LENGTH_LONG).show();
                         }
                     }
                 });

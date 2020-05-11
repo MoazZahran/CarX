@@ -7,4 +7,6 @@
     <string name="login">Login</string>
     <string name="sign_up">Sign Up</string>
     <string name="title_activity_driver_maps">Map</string>
+    <string name="log_out">Log Out</string>
+    <string name="call_your_car">Call Your Car!</string>
 </resources>
