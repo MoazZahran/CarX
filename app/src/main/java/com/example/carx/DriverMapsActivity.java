@@ -126,7 +126,7 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
                             if (error != null) {
                                 Toast.makeText(DriverMapsActivity.this, "There was an error saving the location to GeoFire: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
-//                                Toast.makeText(DriverMapsActivity.this, "Location saved on server successfully!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(DriverMapsActivity.this, "Location saved on server successfully!", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
