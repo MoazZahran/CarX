@@ -48,6 +48,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
     Location mLastLocation;
     LocationRequest mLocationRequest;
     private FusedLocationProviderClient mFusedLocationProviderClient;
+    LatLng latLng;
 
     private Button mLogOut, mCallCar;
 
@@ -87,7 +88,12 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                     return;
                 }
 
-                geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
+                    @Override
+                    public void onComplete(String key, DatabaseError error) {
+
+                    }
+                });
                 pickUpLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                 mMap.addMarker(new MarkerOptions().position(pickUpLocation).title("Pick Up Here"));
 
@@ -136,7 +142,8 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
 //                    }
 
 //                    Toast.makeText(DriverMapsActivity.this, "يارب تشتغل!", Toast.LENGTH_SHORT).show()
-                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    mLastLocation = location;
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                     mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
                 }
