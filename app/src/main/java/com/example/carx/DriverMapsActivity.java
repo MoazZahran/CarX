@@ -77,12 +77,12 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
                 finish();
             }
         });
-        getAssignedCustomer();
+        getAssignedCustomer(); // ?
     }
 
     private void getAssignedCustomer(){
         String driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverId).child("customerRideId");
+        DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverId).child("customerRideID");
         assignedCustomerRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -166,7 +166,13 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                     mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
 
-                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                        startActivity(new Intent(DriverMapsActivity.this, CustomerLoginActivity.class));
+                        finish();
+                        return;
+                    }
+                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
                     DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("driversAvailable");
                     DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("driversWorking");
                     GeoFire geoFireAvailable = new GeoFire(refAvailable);
@@ -260,8 +266,11 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
     protected void onStop() {
         super.onStop();
 
-        String userId = FirebaseAuth.getInstance().getUid();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("driverAvailable");
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            return;
+        }
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("driversAvailable");
 
         GeoFire geoFire = new GeoFire(ref);
         geoFire.removeLocation(userId);

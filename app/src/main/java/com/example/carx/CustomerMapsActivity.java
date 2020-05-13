@@ -71,6 +71,13 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            startActivity(new Intent(CustomerMapsActivity.this, CustomerLoginActivity.class));
+            finish();
+            return;
+        }
+
+
         mLogOut = findViewById(R.id.Logout_btn);
         mCallCar = findViewById(R.id.Call_car_btn);
 

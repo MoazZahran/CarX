@@ -9,12 +9,14 @@
     tools:context=".DriverLoginActivity">
 
     <EditText
+        android:text="driver@driver.com"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/e_mail"
         android:id="@+id/Driver_Login_Email"/>
 
     <EditText
+        android:text="123456"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/password"
