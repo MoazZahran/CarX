@@ -17,8 +17,8 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/main_activity_Costumer"
-        android:text="@string/i_am_a_costumer"/>
+        android:id="@+id/main_activity_Customer"
+        android:text="@string/i_am_a_customer"/>
 
 
 </LinearLayout>

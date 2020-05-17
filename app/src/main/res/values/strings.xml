@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">CarX</string>
     <string name="i_am_a_driver">I Am a Driver</string>
-    <string name="i_am_a_costumer">I Am A Costumer</string>
+    <string name="i_am_a_customer">I Am A Customer</string>
     <string name="e_mail">E-mail</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
