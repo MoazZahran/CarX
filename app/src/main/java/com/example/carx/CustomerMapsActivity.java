@@ -37,6 +37,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -57,10 +59,10 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
     LocationRequest mLocationRequest;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     LatLng latLng;
-
     private Button mLogOut, mCallCar;
-
     private LatLng pickUpLocation;
+    private Boolean requestBol = false;
+    private Marker pickupMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +78,6 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
             finish();
             return;
         }
-
 
         mLogOut = findViewById(R.id.Logout_btn);
         mCallCar = findViewById(R.id.Call_car_btn);
@@ -94,27 +95,59 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
         mCallCar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("CustomerRequest");
-                GeoFire geoFire = new GeoFire(ref);
 
-                if (mLastLocation == null){
-                    Toast.makeText(CustomerMapsActivity.this, "Please Wait..", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                if (requestBol){
+                    requestBol = false;
+                    geoQuery.removeAllListeners();
+                    driverLocationRef.removeEventListener(driverLocationRefListener);
 
-                geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
-                    @Override
-                    public void onComplete(String key, DatabaseError error) {
-
+                    if (driverFoundID != null){
+                        DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID);
+                        driverRef.setValue(true);
+                        driverFoundID = null;
                     }
-                });
-                pickUpLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(pickUpLocation).title("Pick Up Here"));
 
-                mCallCar.setText("Getting Your Driver..");
+                    driverFound = false;
+                    radius = 1;
 
-                getClosestDriver();
+                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("CustomerRequest");
+                    GeoFire geoFire = new GeoFire(ref);
+                    geoFire.removeLocation(userId, new GeoFire.CompletionListener() {
+                        @Override
+                        public void onComplete(String key, DatabaseError error) {
+                        }
+                    });
+
+                    if (pickupMarker != null){
+                        pickupMarker.remove();
+                    }
+                    mCallCar.setText("CALL YOUR CAR!");
+
+                } else {
+                    requestBol = true;
+                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("CustomerRequest");
+                    GeoFire geoFire = new GeoFire(ref);
+
+                    if (mLastLocation == null){
+                        Toast.makeText(CustomerMapsActivity.this, "Please Wait..", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
+                        @Override
+                        public void onComplete(String key, DatabaseError error) {
+
+                        }
+                    });
+
+                    pickUpLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                    pickupMarker = mMap.addMarker(new MarkerOptions().position(pickUpLocation).title("Pick Up Here"));
+                    mCallCar.setText("Getting Your Driver..");
+                    getClosestDriver();
+
+                }
             }
         });
     }
@@ -122,18 +155,19 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
     private int radius = 1;
     private Boolean driverFound = false;
     private String driverFoundID;
+    GeoQuery geoQuery;
 
     private void getClosestDriver() {
         DatabaseReference driverLocation = FirebaseDatabase.getInstance().getReference().child("driversAvailable");
 
         GeoFire geoFire = new GeoFire(driverLocation);
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(pickUpLocation.latitude, pickUpLocation.longitude), radius);
+        geoQuery = geoFire.queryAtLocation(new GeoLocation(pickUpLocation.latitude, pickUpLocation.longitude), radius);
         geoQuery.removeAllListeners();
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                if (!driverFound){
+                if (!driverFound && requestBol){
                     driverFound = true;
                     driverFoundID = key;
 
@@ -174,13 +208,15 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
     }
 
     private Marker mDriverMarker;
+    private DatabaseReference driverLocationRef;
+    private ValueEventListener driverLocationRefListener;
 
     private void getDriverLocation() {
-        DatabaseReference driverLocationRef = FirebaseDatabase.getInstance().getReference().child("driversWorking").child(driverFoundID).child("l");
-        driverLocationRef.addValueEventListener(new ValueEventListener() {
+        driverLocationRef = FirebaseDatabase.getInstance().getReference().child("driversWorking").child(driverFoundID).child("l");
+        driverLocationRefListener = driverLocationRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
+                if (dataSnapshot.exists() && requestBol){
                     List<Object> map = (List<Object>) dataSnapshot.getValue();
                     double locationlat = 0;
                     double locationlng = 0;
@@ -211,7 +247,8 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                         mCallCar.setText("Driver Found! " + String.valueOf(distance));
                     }
 
-                    mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("Your Driver"));
+                    mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("Your Driver").icon(BitmapDescriptorFactory.fromResource(R.drawable.car_red))
+                    .anchor((float)0.5 , (float)0.5));
                 }
             }
 
