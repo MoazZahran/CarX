@@ -8,6 +8,13 @@
     tools:context=".CustomerSettingsActivity"
     android:orientation="vertical"
     android:padding="20dp">
+    
+    <ImageView
+        android:layout_width="100sp"
+        android:layout_height="100sp"
+        android:id="@+id/customer_settings_image_iv"
+        android:src="@drawable/default_user"
+        android:layout_marginBottom="20sp"/>
 
     <EditText
         android:id="@+id/customer_settings_name_et"
