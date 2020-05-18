@@ -52,7 +52,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
     LocationRequest mLocationRequest;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     LatLng latLng;
-    private Button mLogOut, mCallCar;
+    private Button mLogOut, mCallCar, mSettings;
     private LatLng pickUpLocation;
     private Boolean requestBol = false;
     private Marker pickupMarker;
@@ -74,6 +74,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
 
         mLogOut = findViewById(R.id.Logout_btn);
         mCallCar = findViewById(R.id.Call_car_btn);
+        mSettings = findViewById(R.id.Settings_btn);
 
         mLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,6 +142,15 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                     getClosestDriver();
 
                 }
+            }
+        });
+
+        mSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CustomerMapsActivity.this, CustomerSettingsActivity.class);
+                startActivity(intent);
+                return;
             }
         });
     }
