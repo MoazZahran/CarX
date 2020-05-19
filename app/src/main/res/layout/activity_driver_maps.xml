@@ -17,6 +17,48 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-<!--        tools:layout="@layout/activity_driver_maps" />-->
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/activity_driver_maps_customer_info"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:background="@android:color/white"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="100sp"
+            android:layout_height="100sp"
+            android:id="@+id/activity_driver_maps_customer_profile_image"
+            android:src="@drawable/default_user"
+            android:padding="20sp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="40sp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/activity_driver_maps_customer_name"
+                android:paddingBottom="10sp"
+                android:paddingTop="20sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/activity_driver_maps_customer_phone"
+                android:paddingBottom="10sp"
+                android:paddingTop="20sp"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
 
 </FrameLayout>
