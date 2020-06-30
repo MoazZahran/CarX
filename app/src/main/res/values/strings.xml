@@ -15,4 +15,7 @@
     <string name="back">Back</string>
     <string name="car">Car</string>
     <string name="settings">Settings</string>
+    <string name="carx">CarX</string>
+    <string name="carblack">CarBlack</string>
+    <string name="carxl">CarXL</string>
 </resources>

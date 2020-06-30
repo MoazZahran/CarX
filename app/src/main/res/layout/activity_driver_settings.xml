@@ -40,6 +40,30 @@
         android:layout_marginBottom="20sp"
         android:inputType="textPersonName"/>
 
+     <RadioGroup
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:id="@+id/Radio_Group"
+         android:orientation="horizontal">
+
+         <RadioButton
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="@string/carx"
+             android:id="@+id/Car_x_RB"/>
+         <RadioButton
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="@string/carblack"
+             android:id="@+id/Car_Black_RB"/>
+         <RadioButton
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="@string/carxl"
+             android:id="@+id/Car_XL_RB"/>
+         
+     </RadioGroup>
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
