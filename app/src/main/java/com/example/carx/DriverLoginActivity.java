@@ -63,8 +63,8 @@ public class DriverLoginActivity extends AppCompatActivity {
                             Toast.makeText(DriverLoginActivity.this, "Sign Up Error", Toast.LENGTH_LONG).show();
                         } else {
                             String driverId = mAuth.getCurrentUser().getUid();
-                            DatabaseReference current_Driver_db = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverId);
-                            current_Driver_db.setValue(true);
+                            DatabaseReference current_Driver_db = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverId).child("name");
+                            current_Driver_db.setValue(userEmail);
                         }
                     }
                 });

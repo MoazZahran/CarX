@@ -9,8 +9,15 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/Logout_btn"
+        android:id="@+id/driver_Logout_btn"
         android:text="@string/log_out"/>
+
+    <Button
+        android:layout_gravity="end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/driver_Settings_btn"
+        android:text="@string/settings"/>
 
     <fragment
         android:id="@+id/map"

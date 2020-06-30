@@ -58,7 +58,7 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
     Location mLastLocation;
     LocationRequest mLocationRequest;
     private FusedLocationProviderClient mFusedLocationProviderClient;
-    private Button mLogOut;
+    private Button mLogOut, mSettings;
     private String customerId = "";
     private Boolean isLogginOut = false;
     private LinearLayout mCustomerInfo;
@@ -74,7 +74,8 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        mLogOut = findViewById(R.id.Logout_btn);
+        mLogOut = findViewById(R.id.driver_Logout_btn);
+        mSettings = findViewById(R.id.driver_Settings_btn);
         mCustomerInfo = findViewById(R.id.activity_driver_maps_customer_info);
         mCustomerProfileImage = findViewById(R.id.activity_driver_maps_customer_profile_image);
         mCustomerName = findViewById(R.id.activity_driver_maps_customer_name);
@@ -84,7 +85,7 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
             @Override
             public void onClick(View v) {
                 isLogginOut = true;
-                disconectDriver();
+                disconnectDriver();
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(DriverMapsActivity.this, MainActivity.class);
                 startActivity(intent);
@@ -92,6 +93,16 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
                 return;
             }
         });
+
+        mSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DriverMapsActivity.this, DriverSettingsActivity.class);
+                startActivity(intent);
+                return;
+            }
+        });
+
         getAssignedCustomer(); // ?
     }
 
@@ -242,7 +253,7 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
                             geoFireWorking.removeLocation(userId, new GeoFire.CompletionListener() {
                                 @Override
                                 public void onComplete(String key, DatabaseError error) {
-                                    Toast.makeText(DriverMapsActivity.this, "جت الحزينة تفرح", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(DriverMapsActivity.this, "جت الحزينة تفرح", Toast.LENGTH_SHORT).show();
                                 }
                             });
                             geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
@@ -253,7 +264,7 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
 //                            } else {
 //                                Toast.makeText(DriverMapsActivity.this, "Location saved on server successfully!", Toast.LENGTH_SHORT).show();
 //                            }
-                                    Toast.makeText(DriverMapsActivity.this, "ملقتلهاش مطرح", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(DriverMapsActivity.this, "ملقتلهاش مطرح", Toast.LENGTH_SHORT).show();
                                 }
                             });
                             break;
@@ -262,7 +273,7 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
                             geoFireAvailable.removeLocation(userId, new GeoFire.CompletionListener() {
                                 @Override
                                 public void onComplete(String key, DatabaseError error) {
-                                    Toast.makeText(DriverMapsActivity.this, "نوتي بوي", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(DriverMapsActivity.this, "نوتي بوي", Toast.LENGTH_SHORT).show();
                                 }
                             });
                             geoFireWorking.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
@@ -273,7 +284,7 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
 //                            } else {
 //                                Toast.makeText(DriverMapsActivity.this, "Location saved on server successfully!", Toast.LENGTH_SHORT).show();
 //                            }
-                                    Toast.makeText(DriverMapsActivity.this, "هاهاهاهاهاهاهاها", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(DriverMapsActivity.this, "هاهاهاهاهاهاهاها", Toast.LENGTH_SHORT).show();
 
                                 }
                             });
@@ -321,7 +332,7 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
-    private void disconectDriver(){
+    private void disconnectDriver(){
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("driversAvailable");
 
@@ -332,7 +343,6 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
 
             }
         });
-
     }
 
     @Override
@@ -340,7 +350,7 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
         super.onStop();
 
         if (!isLogginOut){
-            disconectDriver();
+            disconnectDriver();
         }
     }
 }
